@@ -28,9 +28,6 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         xRotation = 0;
         yRotation = 0;
     }
@@ -67,7 +64,16 @@ public class CameraController : MonoBehaviour
 
     public void UnlockLook(InputAction.CallbackContext context)
     {
-        canLook = (context.started || context.performed)? true : false;
+        if (context.started || context.performed)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            canLook = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            canLook = false;
+        }
     }
 
     public void Look(InputAction.CallbackContext context)
