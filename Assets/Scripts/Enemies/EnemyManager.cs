@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-enum State
-{
-    idle,
-    attack,
-    chase
-}
-
 public class EnemyManager : MonoBehaviour
 {
-    [SerializeField] private float damage;
+    [SerializeField] private float attack;
     [SerializeField] private float range;
     [SerializeField] private float attackSpeed;
-    [SerializeField] private float defense;
-    [SerializeField] private float speed;
+    [SerializeField] private float defence;
     [SerializeField] private float probabilityOfPary;
+    [SerializeField] private float maxSpeed;
     [SerializeField] private float viewDistance;
+    [SerializeField] private float intimidation;
+    [SerializeField] private float maxEnergy;
+
+    private float fear;
+    private float currentSpeed;
+    private float currentEnergy;
 
 
     // Start is called before the first frame update
@@ -30,6 +29,6 @@ public class EnemyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

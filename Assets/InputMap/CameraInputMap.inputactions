@@ -308,7 +308,7 @@
                 {
                     "name": "",
                     "id": "3f6fbb90-fabd-4230-90bb-941e9dda9585",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

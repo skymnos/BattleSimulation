@@ -25,6 +25,8 @@ public class CameraController : MonoBehaviour
     private float xRotation;
     private float yRotation;
 
+    private List<BatallionManager> selectedBatallions = new List<BatallionManager>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -81,5 +83,36 @@ public class CameraController : MonoBehaviour
         Vector2 mouse = context.ReadValue<Vector2>();
         mouseX = mouse.x * sensX;
         mouseY = mouse.y * sensY;
+    }
+
+    public void SelectObject(InputAction.CallbackContext context)
+    {
+        if (!context.started)
+        {
+            return;
+        }
+
+
+        foreach (BatallionManager batallion in selectedBatallions)
+        {
+            batallion.Unselect();
+        }
+            selectedBatallions.Clear();
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //reconstruit le vecteur direction en 3D depuis l'écran vers le monde
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            Debug.DrawLine(ray.origin, hit.point);
+            Debug.Log(hit.collider);
+
+            BatallionManager batallionSelected = hit.collider.GetComponentInParent<BatallionManager>();
+            if (batallionSelected != null)
+            {
+                batallionSelected.Select();
+                selectedBatallions.Add(batallionSelected);
+            }
+        }
     }
 }
