@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Fire",
+                    "name": "Select",
                     "type": "Button",
                     "id": "6c2ab1b8-8984-453a-af3d-a3c78ae1679a",
                     "expectedControlType": "Button",
@@ -45,6 +45,15 @@
                     "name": "EnableLook",
                     "type": "Button",
                     "id": "05f0c1f9-afa2-40a0-a525-e3e656bd9d1c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Action",
+                    "type": "Button",
+                    "id": "e7bcdbdb-37c2-4006-a6c8-ac2756d7986a",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -224,7 +233,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Fire",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -235,7 +244,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Fire",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -246,7 +255,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "Fire",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -257,7 +266,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Fire",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -268,7 +277,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Fire",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -313,6 +322,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "EnableLook",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44ea5cd4-9c01-47e8-bd57-8e59120def57",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
