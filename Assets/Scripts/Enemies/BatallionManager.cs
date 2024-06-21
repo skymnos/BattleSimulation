@@ -97,7 +97,7 @@ public class BatallionManager : MonoBehaviour, ISelectable
         {
             units.Add(child.gameObject);
         }
-        ChangeUnitsShape(unitsShape.Line);
+        ChangeUnitsShape(unitsShape.Square);
     }
 
     // Update is called once per frame
@@ -152,22 +152,87 @@ public class BatallionManager : MonoBehaviour, ISelectable
 
     private void ChangeToSquare()
     {
-
+        int xOffset = 0;
+        int zOffset = 0;
+        int spawnedUnits = 0;
+        while(spawnedUnits < units.Count)
+        {
+            for (int i = 0; i < (int) Mathf.Sqrt(units.Count); i++)
+            {
+                Vector3 regroupingPoint = new Vector3(transform.position.x + xOffset, transform.position.y, transform.position.z + zOffset);
+                if (spawnedUnits < units.Count)
+                {
+                    units[spawnedUnits].GetComponent<EnemyManager>().ChangeRegroupingPoint(regroupingPoint);
+                }
+                xOffset += 2;
+                spawnedUnits++;
+            }
+            xOffset = 0;
+            zOffset += 2;
+        }
     }
 
     private void ChangeToRectangle()
     {
-
+        int xOffset = 0;
+        int zOffset = 0;
+        int spawnedUnits = 0;
+        while (spawnedUnits < units.Count)
+        {
+            for (int i = 0; i < (int)(2 * Mathf.Sqrt(units.Count)); i++)
+            {
+                Vector3 regroupingPoint = new Vector3(transform.position.x + xOffset, transform.position.y, transform.position.z + zOffset);
+                if (spawnedUnits < units.Count)
+                {
+                    units[spawnedUnits].GetComponent<EnemyManager>().ChangeRegroupingPoint(regroupingPoint);
+                }
+                xOffset += 2;
+                spawnedUnits++;
+            }
+            xOffset = 0;
+            zOffset += 2;
+        }
     }
 
     private void ChangeToTriangle() 
     { 
-        
+        int xOffset = 0;
+        float zOffset = 0;
+        int spawnedUnits = 0;
+        int unitsPerLine = 1;
+        while (spawnedUnits < units.Count)
+        {
+            for (int j = 0; j < unitsPerLine; j++)
+            {
+                Vector3 regroupingPoint = new Vector3(transform.position.x + xOffset, transform.position.y, transform.position.z + zOffset);
+                if (spawnedUnits < units.Count)
+                {
+                    units[spawnedUnits].GetComponent<EnemyManager>().ChangeRegroupingPoint(regroupingPoint);
+                }
+                xOffset += 2;
+                spawnedUnits++;
+            }
+            xOffset = -1 * unitsPerLine;
+            zOffset += 1.8f;
+            unitsPerLine++;
+        }
     }
 
     private void ChangeToCircle()
     {
+        if (units.Count == 0)
+            return;
 
+        float circumference = 2 * units.Count;
+        float radius = circumference / (2 * Mathf.PI);
+        float angleStep = 360.0f / units.Count;
+
+        for (int i = 0; i < units.Count; i++)
+        {
+            float angle = i * angleStep * Mathf.Deg2Rad; // Convertir en radians
+            Vector3 regroupingPoint = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+            units[i].GetComponent<EnemyManager>().ChangeRegroupingPoint(regroupingPoint);
+        }
     }
     #endregion
 }

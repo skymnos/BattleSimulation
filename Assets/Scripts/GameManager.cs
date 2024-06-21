@@ -10,7 +10,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI pauseButtonText;
     [SerializeField] private TextMeshProUGUI gameSpeedText;
     [SerializeField] private float[] gameSpeeds;
+    
     [SerializeField] private Button AddUnitButton;
+    [SerializeField] private Button LineShapeButton;
+    [SerializeField] private Button SquareShapeButton;
+    [SerializeField] private Button RectangleShapeButton;
+    [SerializeField] private Button TriangleShapeButton;
+    [SerializeField] private Button CircleShapeButton;
+
     [SerializeField] private GameObject unitPrefab;
 
     private float previousGameSpeed;
@@ -128,6 +135,12 @@ public class GameManager : MonoBehaviour
             }
             selectedBatallions.Clear();
             AddUnitButton.onClick.RemoveAllListeners();
+            LineShapeButton.onClick.RemoveAllListeners();
+            SquareShapeButton.onClick.RemoveAllListeners();
+            RectangleShapeButton.onClick.RemoveAllListeners();
+            TriangleShapeButton.onClick.RemoveAllListeners();
+            CircleShapeButton.onClick.RemoveAllListeners();
+
         }
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //reconstruit le vecteur direction en 3D depuis l'écran vers le monde
@@ -145,13 +158,14 @@ public class GameManager : MonoBehaviour
             {
                 batallionSelected.Select();
                 selectedBatallions.Add(batallionSelected);
-                AddUnitButton.onClick.AddListener(AddUnit);
+                AddUnitButton.onClick.AddListener(() => selectedBatallions[0].AddUnit(unitPrefab));
+                LineShapeButton.onClick.AddListener(() => selectedBatallions[0].ChangeUnitsShape(unitsShape.Line));
+                SquareShapeButton.onClick.AddListener(() => selectedBatallions[0].ChangeUnitsShape(unitsShape.Square));
+                RectangleShapeButton.onClick.AddListener(() => selectedBatallions[0].ChangeUnitsShape(unitsShape.Rectangle));
+                TriangleShapeButton.onClick.AddListener(() => selectedBatallions[0].ChangeUnitsShape(unitsShape.Triangle));
+                CircleShapeButton.onClick.AddListener(() => selectedBatallions[0].ChangeUnitsShape(unitsShape.Circle));
+
             }
         }
-    }
-
-    void AddUnit()
-    {
-        selectedBatallions[0].AddUnit(unitPrefab);
     }
 }
