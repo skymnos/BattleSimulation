@@ -166,6 +166,7 @@ MonoBehaviour:
   viewDistance: 0
   intimidation: 0
   maxEnergy: 0
+  navMeshAgent: {fileID: 0}
 --- !u!195 &485360240
 NavMeshAgent:
   m_ObjectHideFlags: 0

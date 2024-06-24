@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem.HID;
 
 public enum unitsShape
@@ -12,6 +13,13 @@ public enum unitsShape
     Line
 }
 
+public enum unitsState
+{
+    Charge,
+    Hold,
+    Walk
+}
+
 public class BatallionManager : MonoBehaviour, ISelectable
 {
     public bool selected { get; set; }
@@ -19,6 +27,14 @@ public class BatallionManager : MonoBehaviour, ISelectable
     private List<GameObject> units = new List<GameObject>();
 
     private unitsShape currentUnitsShape = unitsShape.Rectangle;
+
+    private unitsState currentUnitsState = unitsState.Walk;
+
+    private NavMeshAgent navMeshAgent;
+
+    private Color batallionColor;
+
+    [SerializeField] private float unitsSpeed; 
 
 
     #region Selection
@@ -33,59 +49,35 @@ public class BatallionManager : MonoBehaviour, ISelectable
 
             if (mat.color.r == 255)
             {
-                r = mat.color.r;
-                g = mat.color.g * 1.3f;
-                b = mat.color.b * 1.3f;
+                r = batallionColor.r;
+                g = batallionColor.g * 1.3f;
+                b = batallionColor.b * 1.3f;
             }
             else if (mat.color.g == 255)
             {
-                r = mat.color.r * 1.3f;
-                g = mat.color.g;
-                b = mat.color.b * 1.3f;
+                r = batallionColor.r * 1.3f;
+                g = batallionColor.g;
+                b = batallionColor.b * 1.3f;
             }
             else
             {
-                r = mat.color.r * 1.3f;
-                g = mat.color.g * 1.3f;
-                b = mat.color.b;
+                r = batallionColor.r * 1.3f;
+                g = batallionColor.g * 1.3f;
+                b = batallionColor.b;
             }
-            mat.color = new Color(r, g, b, mat.color.a);
+            mat.color = new Color(r, g, b, batallionColor.a);
         }
         selected = true;
     }
 
     public void Unselect()
     {
-        float r;
-        float g;
-        float b;
-
         foreach (GameObject unit in units)
         {
             Material mat = unit.GetComponent<Renderer>().material;
-
-            if (mat.color.r == 255)
-            {
-                r = mat.color.r;
-                g = mat.color.g / 1.3f;
-                b = mat.color.b / 1.3f;
-            }
-            else if (mat.color.g == 255)
-            {
-                r = mat.color.r / 1.3f;
-                g = mat.color.g;
-                b = mat.color.b / 1.3f;
-            }
-            else
-            {
-                r = mat.color.r / 1.3f;
-                g = mat.color.g / 1.3f;
-                b = mat.color.b;
-            }
-
-            mat.color = new Color(r, g, b, mat.color.a);
+            mat.color = batallionColor;
         }
-        selected = true;
+        selected = false;
     }
 
     #endregion
@@ -93,6 +85,10 @@ public class BatallionManager : MonoBehaviour, ISelectable
     // Start is called before the first frame update
     void Start()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+
+        batallionColor = gameObject.GetComponentInChildren<Renderer>().material.color;
+
         foreach (Transform child in transform)
         {
             units.Add(child.gameObject);
@@ -113,16 +109,13 @@ public class BatallionManager : MonoBehaviour, ISelectable
 
     public void AddUnit(GameObject unit)
     {
-        Unselect();
+        //Unselect();
         GameObject newUnit = Instantiate(unit);
         newUnit.transform.parent = transform;
         newUnit.transform.position = transform.position + new Vector3(-2, 0, -2);
         units.Add(newUnit);
         ChangeUnitsShape(currentUnitsShape);
-        if (selected)
-        {
-            Select();
-        }
+        Select();
     }
 
     public void RemoveUnit(GameObject unit)
@@ -157,7 +150,7 @@ public class BatallionManager : MonoBehaviour, ISelectable
         int spawnedUnits = 0;
         while(spawnedUnits < units.Count)
         {
-            for (int i = 0; i < (int) Mathf.Sqrt(units.Count); i++)
+            for (int i = 0; i < Mathf.Ceil(Mathf.Sqrt(units.Count)); i++)
             {
                 Vector3 regroupingPoint = new Vector3(transform.position.x + xOffset, transform.position.y, transform.position.z + zOffset);
                 if (spawnedUnits < units.Count)
@@ -230,9 +223,50 @@ public class BatallionManager : MonoBehaviour, ISelectable
         for (int i = 0; i < units.Count; i++)
         {
             float angle = i * angleStep * Mathf.Deg2Rad; // Convertir en radians
-            Vector3 regroupingPoint = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
+            Vector3 regroupingPoint = new Vector3(transform.position.x + Mathf.Cos(angle) * radius, transform.position.y, transform.position.z + Mathf.Sin(angle) * radius);
             units[i].GetComponent<EnemyManager>().ChangeRegroupingPoint(regroupingPoint);
         }
     }
+    #endregion
+
+    #region Movement
+    
+    public void ChangeUnitsState(unitsState newUnitsState)
+    {
+        currentUnitsState = newUnitsState;
+        Invoke("ChangeTo" + newUnitsState, 0f);
+    }
+
+    public void MoveTo(Vector3 position)
+    {
+        Vector3 previousPosition = transform.position;
+
+        foreach (GameObject unit in units)
+        {
+            unit.transform.parent = null;
+        }
+
+        transform.position = position;
+
+        foreach (GameObject unit in units) 
+        {
+            Vector3 offset = unit.transform.position - previousPosition;
+            Vector3 regroupingPoint = transform.position + offset;
+            unit.GetComponent<EnemyManager>().ChangeRegroupingPoint(regroupingPoint);
+            unit.transform.parent = transform;
+            NavMeshAgent navMesh = unit.GetComponent<EnemyManager>().navMeshAgent;
+            navMesh.speed = unitsSpeed;
+            float velocityMultiplier = Random.Range(0.95f, 1.05f);
+            navMesh.speed *= velocityMultiplier;
+            while (navMesh.pathStatus == NavMeshPathStatus.PathPartial)
+            {
+            }
+            ChangeUnitsShape(currentUnitsShape);
+            
+        }
+    }
+
+    
+
     #endregion
 }

@@ -20,7 +20,7 @@ public class EnemyManager : MonoBehaviour
     private float currentSpeed;
     private float currentEnergy;
     private Vector3 regroupingPoint;
-    private NavMeshAgent navMeshAgent;
+    public NavMeshAgent navMeshAgent;
 
 
     // Start is called before the first frame update
@@ -40,4 +40,5 @@ public class EnemyManager : MonoBehaviour
         regroupingPoint = newRegroupingPoint;
         navMeshAgent.destination = regroupingPoint;
     }
+
 }
